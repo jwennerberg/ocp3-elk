@@ -33,14 +33,12 @@ RUN rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch && \
                 elasticsearch && \
     yum clean all
 
-WORKDIR /usr/share/elasticsearch
-
 ADD elasticsearch.yml /usr/share/elasticsearch/config/
-ADD install.sh ${HOME}/
-RUN ${HOME}/install.sh
-ADD run.sh ${HOME}/
+ADD install.sh /opt/app-root/src
+RUN /opt/app-root/src/install.sh
+ADD run.sh /opt/app-root/src
 
-WORKDIR ${HOME}
+WORKDIR /opt/app-root/src
 EXPOSE 9200 9300
 USER 1000
 CMD ["sh", "/opt/app-root/src/run.sh"]
