@@ -22,7 +22,7 @@ RUN yum -y install deltarpm yum-utils --disablerepo=*-eus-* --disablerepo=*-htb-
 
 RUN yum-config-manager --disable *-eus-* *-htb-* *-ha-* *-rt-* *-lb-* *-rs-* *-sap-* && \
     yum -y update && \
-    yum -y install --setopt=tsflags=nodocs lsof witch tar wget unzip net-tools iproute && \
+    yum -y install --setopt=tsflags=nodocs lsof witch tar wget unzip net-tools iproute hostname sysvinit-tools util-linux bsdtar && \
     yum clean all
 
 ADD elasticsearch.repo /etc/yum.repos.d/elasticsearch.repo
