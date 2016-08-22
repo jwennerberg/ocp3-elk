@@ -1,10 +1,11 @@
 cluster:
-  name: placeholder
+  name: ocp3-elasticsearch
 
 script:
-  disable_dynamic: false
+  script.inline: on
+  script.indexed: on
 
 path:
-  data: /elasticsearch/data/placeholder/data
-  logs: /elasticsearch/placeholder/logs
-  work: /elasticsearch/placeholder/work
+  data: /elasticsearch/data/ocp3-elasticsearch/data
+  logs: /elasticsearch/ocp3-elasticsearch/logs
+  work: /elasticsearch/ocp3-elasticsearch/work
