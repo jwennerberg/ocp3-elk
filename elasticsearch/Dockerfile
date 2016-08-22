@@ -11,10 +11,10 @@ LABEL \
       Release="1" \
       Architecture="x86_64"
 
-ENV ELASTICSEARCH_MAJOR 2.3 \
-    ELASTICSEARCH_VERSION 2.3.2 \
-    ELASTICSEARCH_REPO_BASE http://packages.elastic.co/elasticsearch/2.x/centos \
-    HOME=/opt/app-root/src
+ENV ELASTICSEARCH_MAJOR 2.3 
+ENV  ELASTICSEARCH_VERSION 2.3.2 
+ENV  ELASTICSEARCH_REPO_BASE http://packages.elastic.co/elasticsearch/2.x/centos 
+ENV  HOME=/opt/app-root/src
 
 # Fix per https://bugzilla.redhat.com/show_bug.cgi?id=1192200 
 RUN yum -y install deltarpm yum-utils --disablerepo=*-eus-* --disablerepo=*-htb-* \
@@ -34,11 +34,11 @@ RUN rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch && \
     yum clean all
 
 ADD elasticsearch.yml /usr/share/elasticsearch/config/
-ADD install.sh /opt/app-root/src
-RUN /opt/app-root/src/install.sh
-ADD run.sh /opt/app-root/src
+ADD install.sh ${HOME}/
+RUN ${HOME}/install.sh
+ADD run.sh ${HOME}/
 
-WORKDIR /opt/app-root/src
+WORKDIR ${HOME}
 EXPOSE 9200 9300
 USER 1000
 CMD ["sh", "/opt/app-root/src/run.sh"]
