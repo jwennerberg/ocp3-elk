@@ -35,7 +35,7 @@ RUN rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch && \
 
 WORKDIR /usr/share/elasticsearch
 
-ADD elasticsearch.yml logging.yml /usr/share/elasticsearch/config/
+ADD elasticsearch.yml /usr/share/elasticsearch/config/
 ADD install.sh ${HOME}/
 RUN ${HOME}/install.sh
 ADD run.sh ${HOME}/
