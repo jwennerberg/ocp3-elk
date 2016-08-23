@@ -6,12 +6,12 @@ USER 0
 
 LABEL \
       # Labels consumed by Red Hat build service.
-      Name="docker-base/base" \
+      Name="elasticsearch" \
       Version="1.0" \
       Release="1" \
       Architecture="x86_64"
 
-ENV ELASTICSEARCH_MAJOR 2.3 
+ENV  ELASTICSEARCH_MAJOR 2.3 
 ENV  ELASTICSEARCH_VERSION 2.3.2 
 ENV  ELASTICSEARCH_REPO_BASE http://packages.elastic.co/elasticsearch/2.x/centos 
 ENV  HOME=/opt/app-root/src
