@@ -27,12 +27,15 @@ RUN yum-config-manager --disable *-eus-* *-htb-* *-ha-* *-rt-* *-lb-* *-rs-* *-s
 ADD logstash.repo /etc/yum.repos.d/logstash.repo
 
 # install the RPMs in a separate step so it can be cached
-RUN yum install -y --setopt=tsflags=nodocs logstash openssl java-1.8.0-openjdk && \
+RUN yum install -y --setopt=tsflags=nodocs logstash openssl java-1.8.0-openjdk-headless && \
     yum clean all
 
 ADD logstash.yml /opt/app-root
 
 RUN chown -R 1001:1001 /opt/app-root
+
+ENV PATH /opt/logstash/bin:$PATH
+ENV JAVA_HOME /usr/lib/jvm/java-openjdk:$JAVA_HOME
 
 USER 1001
 
