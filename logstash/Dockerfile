@@ -36,6 +36,7 @@ RUN chown -R 1001:1001 /opt/app-root
 
 ENV PATH /opt/logstash/bin:$PATH
 ENV JAVA_HOME /usr/lib/jvm/java-openjdk:$JAVA_HOME
+ENV JAVACMD /usr/bin/java
 
 USER 1001
 
