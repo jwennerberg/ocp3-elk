@@ -38,5 +38,5 @@ USER 1001
 
 EXPOSE 8080
 
-CMD ["logstash","agent","-f","/opt/app-root/logstash.yml"]
+CMD ["/usr/bin/logstash","agent","-f","/opt/app-root/logstash.yml"]
 
