@@ -14,6 +14,7 @@ LABEL \
 ENV KIBANA_MAJOR 4.5
 ENV KIBANA_VERSION 4.5.0
 ENV HOME=/opt/app-root/src
+ENV ELASTICSEARCH_SERVICE_HOST=ocp3-elasticsearch
 
 RUN groupadd -r kibana && useradd -r -m -g kibana kibana
 
