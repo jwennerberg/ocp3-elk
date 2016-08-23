@@ -33,7 +33,7 @@ RUN rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch && \
                 elasticsearch && \
     yum clean all
 
-ADD elasticsearch.yml /usr/share/elasticsearch/config/
+ADD logging.yml elasticsearch.yml /usr/share/elasticsearch/config/
 ADD install.sh ${HOME}/
 RUN ${HOME}/install.sh
 ADD run.sh ${HOME}/
