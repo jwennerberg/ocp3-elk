@@ -30,7 +30,7 @@ ADD logstash.repo /etc/yum.repos.d/logstash.repo
 RUN yum install -y --setopt=tsflags=nodocs logstash openssl java-1.8.0-openjdk-headless && \
     yum clean all
 
-ADD start_logstash.sh logstash.yml /opt/app-root/
+ADD start_logstash.sh logstash.conf /opt/app-root/
 
 RUN chown -R 1001:1001 /opt/app-root
 
