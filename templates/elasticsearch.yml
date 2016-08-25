@@ -1,0 +1,166 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: elasticsearch
+objects:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: elastisearchTemplate
+    creationTimestamp: null
+    labels:
+      app: elasticsearch
+    name: elasticsearch
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: elasticsearch:latest
+    postCommit: {}
+    resources: {}
+    source:
+      contextDir: elasticsearch
+      git:
+        ref: master
+        uri: ${SOURCE_REPOSITORY_URL}
+      secrets: []
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: DockerImage
+          name: rhel7:latest
+      type: Docker
+    triggers:
+    - github:
+        secret: ${GITHUB_WEBHOOK_SECRET}
+      type: GitHub
+    - generic:
+        secret: ${GENERIC_WEBHOOK_SECRET}
+      type: Generic
+    - type: ConfigChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: elastisearchTemplate
+    creationTimestamp: null
+    labels:
+      app: elasticsearch
+    name: elasticsearch
+  spec:
+    replicas: 1
+    selector:
+      app: elasticsearch
+      deploymentconfig: elasticsearch
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: elastisearchTemplate
+        creationTimestamp: null
+        labels:
+          app: elasticsearch
+          deploymentconfig: elasticsearch
+      spec:
+        containers:
+        - env:
+          - name: INSTANCE_RAM
+            value: ${INSTANCE_RAM}
+          name: elasticsearch
+          image: elasticsearch:latest
+          ports:
+          - containerPort: 9200
+            protocol: TCP
+          - containerPort: 9300
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - elasticsearch
+        from:
+          kind: ImageStreamTag
+          name: elasticsearch:latest
+      type: ImageChange
+  status: {}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: elastisearchTemplate
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: elasticsearch
+    name: elasticsearch
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: elastisearchTemplate
+    creationTimestamp: null
+    labels:
+      app: elasticsearch
+    name: elasticsearch
+  spec:
+    ports:
+    - name: 9200-tcp
+      port: 9200
+      protocol: TCP
+      targetPort: 9200
+    - name: 9300-tcp
+      port: 9300
+      protocol: TCP
+      targetPort: 9300
+    selector:
+      app: elasticsearch
+      deploymentconfig: elasticsearch
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+
+parameters:
+-
+  name: GITHUB_WEBHOOK_SECRET
+  displayName: GitHub Webhook Secret
+  description: A secret string used to configure the GitHub webhook.
+  generate: expression
+  from: "[a-zA-Z0-9]{40}"
+-
+  name: GENERIC_WEBHOOK_SECRET
+  displayName: Generic Webhook Secret
+  description: A secret string used to configure the Generic webhook.
+  generate: expression
+  from: "[a-zA-Z0-9]{40}"
+
+- name: SOURCE_REPOSITORY_URL
+  description: The URL of the Git repository with the Dockerfile
+  required: true
+  value: http://github.com/jnordell/ocp3-elk.git
+
+- name: INSTANCE_RAM
+  description: RAM for elasticsearch. Default is 512M
+  required: false
+  value: 512M
