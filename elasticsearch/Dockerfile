@@ -21,7 +21,7 @@ RUN yum-config-manager --disable \*-eus-* \*-htb-* \*-ha-* \*-rt-* \*-lb-* \*-rs
     socat ethtool device-mapper iptables tree findutils nmap-ncat e2fsprogs xfsprogs lsof hostname" && \
     yum -y update && \
     yum -y install --setopt=tsflags=nodocs ${INSTALL_PKGS} && \
-    yum clean all && \
+    yum clean all \
 
 COPY elasticsearch.repo /etc/yum.repos.d/elasticsearch.repo
 
