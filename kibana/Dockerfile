@@ -2,8 +2,6 @@ FROM rhel7:latest
 
 MAINTAINER Jonas Nordell <jnordell@redhat.com>
 
-USER 0
-
 LABEL \
       # Labels consumed by Red Hat build service.
       Name="kibana" \
@@ -16,8 +14,6 @@ ENV KIBANA_VERSION 4.5.0
 ENV HOME=/opt/app-root/src
 ENV ELASTICSEARCH_SERVICE_HOST=elasticsearch
 
-RUN groupadd -r kibana && useradd -r -m -g kibana kibana
-
 RUN yum -y --disablerepo=* --enablerepo=rhel-7-server-rpms install yum-utils deltarpm
 
 RUN yum-config-manager --disable \*-eus-* \*-htb-* \*-ha-* \*-rt-* \*-lb-* \*-rs-* \*-sap-* \*-aus* \*-sjis* \*-nfv* && \
@@ -27,11 +23,12 @@ RUN yum-config-manager --disable \*-eus-* \*-htb-* \*-ha-* \*-rt-* \*-lb-* \*-rs
     yum -y install --setopt=tsflags=nodocs ${INSTALL_PKGS} && \
     yum clean all
 
+RUN groupadd -r kibana && useradd -r -m -g kibana kibana
+
 COPY kibana.repo /etc/yum.repos.d/kibana.repo
 # install the RPMs in a separate step so it can be cached
 RUN rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch && \
-    yum install -y --setopt=tsflags=nodocs \
-                kibana && \
+    yum install -y --setopt=tsflags=nodocs kibana \
     yum clean all
 
 ENV PATH /opt/kibana/bin:$PATH
