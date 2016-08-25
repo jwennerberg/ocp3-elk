@@ -14,7 +14,7 @@ ENV  ELASTICSEARCH_VERSION 2.3.2
 ENV  ELASTICSEARCH_REPO_BASE http://packages.elastic.co/elasticsearch/2.x/centos 
 ENV  HOME=/opt/app-root/src
 
-RUN yum --disablerepo=* --enablerepo=rhel-7-server-rpms install yum-utils deltarpm
+RUN yum -y --disablerepo=* --enablerepo=rhel-7-server-rpms install yum-utils deltarpm
 
 RUN yum-config-manager --disable \*-eus-* \*-htb-* \*-ha-* \*-rt-* \*-lb-* \*-rs-* \*-sap-* \*-aus* \*-sjis* \*-nfv* && \
     INSTALL_PKGS="which git tar wget hostname sysvinit-tools util-linux bsdtar unzip net-tools iproute \
