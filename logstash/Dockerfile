@@ -2,8 +2,6 @@ FROM rhel7:latest
 
 MAINTAINER Jonas Nordell <jnordell@redhat.com>
 
-USER 0
-
 LABEL \
       # Labels consumed by Red Hat build service.
       Name="logstash" \
@@ -13,24 +11,24 @@ LABEL \
 
 ENV HOME=/opt/app-root/src
 
-RUN groupadd -r kibana && useradd -r -m -g kibana kibana
+RUN yum -y --disablerepo=* --enablerepo=rhel-7-server-rpms install yum-utils deltarpm
 
-# Fix per https://bugzilla.redhat.com/show_bug.cgi?id=1192200 
-RUN yum -y install deltarpm yum-utils --disablerepo=*-eus-* --disablerepo=*-htb-* \
-    --disablerepo=*-ha-* --disablerepo=*-rt-* --disablerepo=*-lb-* --disablerepo=*-rs-* --disablerepo=*-sap-*
-
-RUN yum-config-manager --disable *-eus-* *-htb-* *-ha-* *-rt-* *-lb-* *-rs-* *-sap-* && \
+RUN yum-config-manager --disable \*-eus-* \*-htb-* \*-ha-* \*-rt-* \*-lb-* \*-rs-* \*-sap-* \*-aus* \*-sjis* \*-nfv* && \
+    INSTALL_PKGS="which git tar wget hostname sysvinit-tools util-linux bsdtar unzip net-tools iproute \
+    socat ethtool device-mapper iptables tree findutils nmap-ncat e2fsprogs xfsprogs lsof hostname" && \
     yum -y update && \
-    yum -y install --setopt=tsflags=nodocs lsof witch tar wget unzip net-tools iproute hostname sysvinit-tools util-linux bsdtar && \
+    yum -y install --setopt=tsflags=nodocs ${INSTALL_PKGS} && \
     yum clean all
 
-ADD logstash.repo /etc/yum.repos.d/logstash.repo
+COPY logstash.repo /etc/yum.repos.d/logstash.repo
+
+RUN groupadd -r kibana && useradd -r -m -g kibana kibana
 
 # install the RPMs in a separate step so it can be cached
 RUN yum install -y --setopt=tsflags=nodocs logstash openssl java-1.8.0-openjdk-headless && \
     yum clean all
 
-ADD start_logstash.sh logstash.conf /opt/app-root/
+COPY start_logstash.sh logstash.conf /opt/app-root/
 
 RUN chown -R 1001:1001 /opt/app-root
 
@@ -40,8 +38,7 @@ ENV JAVACMD /usr/bin/java
 
 USER 1001
 
-EXPOSE 8080
-EXPOSE 9292
+EXPOSE 8080 9292
 
 CMD ["/opt/app-root/start_logstash.sh"]
 
